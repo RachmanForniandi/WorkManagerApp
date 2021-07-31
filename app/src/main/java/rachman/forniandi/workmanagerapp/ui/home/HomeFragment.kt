@@ -15,6 +15,7 @@ import rachman.forniandi.workmanagerapp.data.work.RandomNumberWork
 import rachman.forniandi.workmanagerapp.data.work.UploadLogWork
 import rachman.forniandi.workmanagerapp.databinding.FragmentHomeBinding
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class HomeFragment : Fragment() {
 
@@ -90,6 +91,7 @@ class HomeFragment : Fragment() {
       .build()
 
     val dataCleanUpWorkRequest = OneTimeWorkRequestBuilder<DataCleanUpWork>()
+      .setInitialDelay(10,TimeUnit.SECONDS)
       .setConstraints(constraints)
       .build()
 

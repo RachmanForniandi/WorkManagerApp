@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 
 class RandomNumberWork(context: Context,workerParameters: WorkerParameters):
     Worker(context,workerParameters) {
@@ -24,7 +25,14 @@ class RandomNumberWork(context: Context,workerParameters: WorkerParameters):
 
             Thread.sleep(1000)
         }
-        return Result.success()
+        /*
+        pass data to result
+        workDataOf is a ktx extension method
+        */
+        val data = workDataOf("KEY_RESULT" to 10)
+
+        //return Result.success()
+        return Result.success(data)
     }
 
     companion object{

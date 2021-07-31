@@ -36,6 +36,14 @@ private var _binding: FragmentHomeBinding? = null
     homeViewModel.text.observe(viewLifecycleOwner, Observer {
       textView.text = it
     })
+
+    homeViewModel.resultData.observe(viewLifecycleOwner,{
+      textView.text = it.toString()
+    })
+
+    homeViewModel.msg.observe(viewLifecycleOwner,{
+      textView.text = it.toString()
+    })
     return root
   }
 
@@ -66,6 +74,26 @@ private var _binding: FragmentHomeBinding? = null
       .build()
 
     workManager.enqueue(randomNumberWorkRequest)
+
+
+    workManager.getWorkInfoByIdLiveData(randomNumberWorkRequest.id).observe(viewLifecycleOwner,{
+      when{
+
+        it.state == WorkInfo.State.RUNNING->{
+          homeViewModel.msg.value = "RandomNumberWork: RUNNING"
+        }
+
+        /*it.state == WorkInfo.State.CANCELLED->{
+          homeViewModel.msg.value = "RandomNumberWork: CANCELLED"
+        }*/
+        it.state.isFinished->{
+          val resultOut =it.outputData.getInt("KEY_RESULT",0)
+          resultOut.let {
+            homeViewModel.resultData.value = it
+          }
+        }
+      }
+    })
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

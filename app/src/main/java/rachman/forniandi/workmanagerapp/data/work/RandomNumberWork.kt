@@ -8,8 +8,18 @@ import androidx.work.WorkerParameters
 class RandomNumberWork(context: Context,workerParameters: WorkerParameters):
     Worker(context,workerParameters) {
 
+    //doWork method runs asynchronously in background thread - this wont block our ui
     override fun doWork(): Result {
-        for (i in 0..10){
+
+        //get the input data
+        val start = inputData.getInt("KEY_START",0)
+        val count = inputData.getInt("KEY_COUNT",0)
+        /*for (i in 0..count){
+            Log.d(TAG,"RandomNumberWork: $i")
+
+            Thread.sleep(1000)
+        }*/
+        for (i in start..count){
             Log.d(TAG,"RandomNumberWork: $i")
 
             Thread.sleep(1000)

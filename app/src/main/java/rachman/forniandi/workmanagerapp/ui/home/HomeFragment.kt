@@ -8,10 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
+import androidx.work.*
 import rachman.forniandi.workmanagerapp.R
 import rachman.forniandi.workmanagerapp.data.work.RandomNumberWork
 import rachman.forniandi.workmanagerapp.databinding.FragmentHomeBinding
@@ -53,9 +50,19 @@ private var _binding: FragmentHomeBinding? = null
       .setRequiredNetworkType(NetworkType.CONNECTED)
       .build()
 
+    //input data
+    /*
+    the maximum number of bytes for data when it serialized is 10 * 1024 = 10Kb
+    */
+    val inputData = Data.Builder()
+      .putInt("KEY_START",0)
+      .putInt("KEY_COUNT",10)
+      .build()
+
     //work request class  allows us to define how and when we want our work to get executed
     val randomNumberWorkRequest = OneTimeWorkRequest.Builder(RandomNumberWork::class.java)
       .setConstraints(constraints)
+      .setInputData(inputData)
       .build()
 
     workManager.enqueue(randomNumberWorkRequest)

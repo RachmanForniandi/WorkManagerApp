@@ -10,13 +10,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.*
 import rachman.forniandi.workmanagerapp.R
+import rachman.forniandi.workmanagerapp.data.work.DataCleanUp
 import rachman.forniandi.workmanagerapp.data.work.RandomNumberWork
 import rachman.forniandi.workmanagerapp.databinding.FragmentHomeBinding
+import java.util.*
 
 class HomeFragment : Fragment() {
 
+
+  private var _binding: FragmentHomeBinding? = null
   private lateinit var homeViewModel: HomeViewModel
-private var _binding: FragmentHomeBinding? = null
+  private lateinit var workManager:WorkManager
+  private lateinit var randomNumberWorkRequestUUID: UUID
   // This property is only valid between onCreateView and
   // onDestroyView.
   private val binding get() = _binding!!
@@ -47,10 +52,20 @@ private var _binding: FragmentHomeBinding? = null
     return root
   }
 
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    //workManager
+    workManager = WorkManager.getInstance(requireContext())
+
+
+    buttonClickListener()
+
+
+  }
+
   private fun oneTimeRequest(){
 
-    //workManager
-    val workManager = WorkManager.getInstance(requireContext())
+
 
     //constraints for workmanager
     val constraints = Constraints.Builder()
@@ -73,7 +88,15 @@ private var _binding: FragmentHomeBinding? = null
       .setInputData(inputData)
       .build()
 
-    workManager.enqueue(randomNumberWorkRequest)
+    val dataCleanUpWorkRequest = OneTimeWorkRequestBuilder<DataCleanUp>()
+      .setConstraints(constraints)
+      .build()
+
+    randomNumberWorkRequestUUID= randomNumberWorkRequest.id
+    //workManager.enqueue(randomNumberWorkRequest)
+    workManager.beginWith(randomNumberWorkRequest)
+      .then(dataCleanUpWorkRequest)
+      .enqueue()
 
 
     workManager.getWorkInfoByIdLiveData(randomNumberWorkRequest.id).observe(viewLifecycleOwner,{
@@ -83,9 +106,9 @@ private var _binding: FragmentHomeBinding? = null
           homeViewModel.msg.value = "RandomNumberWork: RUNNING"
         }
 
-        /*it.state == WorkInfo.State.CANCELLED->{
+        it.state == WorkInfo.State.CANCELLED->{
           homeViewModel.msg.value = "RandomNumberWork: CANCELLED"
-        }*/
+        }
         it.state.isFinished->{
           val resultOut =it.outputData.getInt("KEY_RESULT",0)
           resultOut.let {
@@ -96,13 +119,7 @@ private var _binding: FragmentHomeBinding? = null
     })
   }
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
 
-    buttonClickListener()
-
-
-  }
 
   private fun buttonClickListener(){
     binding.btnStart.setOnClickListener {
@@ -110,7 +127,7 @@ private var _binding: FragmentHomeBinding? = null
     }
 
     binding.btnCancel.setOnClickListener {
-
+      workManager.cancelWorkById(randomNumberWorkRequestUUID)
     }
   }
 

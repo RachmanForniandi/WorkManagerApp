@@ -6,10 +6,10 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 
-class DataCleanUp(context:Context,workerParams:WorkerParameters): Worker(context,workerParams) {
+class CollectLogWork(context:Context, workerParams:WorkerParameters): Worker(context,workerParams) {
     override fun doWork(): Result {
-        for (i in 10..20){
-            Log.d(TAG,"DataCleanUp: $i")
+        for (i in 30..40){
+            Log.d(TAG,"CollectLogWork: $i")
 
             Thread.sleep(1000)
         }
@@ -24,6 +24,6 @@ class DataCleanUp(context:Context,workerParams:WorkerParameters): Worker(context
     }
 
     companion object{
-        const val TAG="DataCleanUp"
+        const val TAG="CollectLogWork"
     }
 }

@@ -9,9 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.*
-import rachman.forniandi.workmanagerapp.R
-import rachman.forniandi.workmanagerapp.data.work.DataCleanUp
+import rachman.forniandi.workmanagerapp.data.work.CollectLogWork
+import rachman.forniandi.workmanagerapp.data.work.DataCleanUpWork
 import rachman.forniandi.workmanagerapp.data.work.RandomNumberWork
+import rachman.forniandi.workmanagerapp.data.work.UploadLogWork
 import rachman.forniandi.workmanagerapp.databinding.FragmentHomeBinding
 import java.util.*
 
@@ -88,15 +89,32 @@ class HomeFragment : Fragment() {
       .setInputData(inputData)
       .build()
 
-    val dataCleanUpWorkRequest = OneTimeWorkRequestBuilder<DataCleanUp>()
+    val dataCleanUpWorkRequest = OneTimeWorkRequestBuilder<DataCleanUpWork>()
       .setConstraints(constraints)
       .build()
+
+    /*
+    * parallel work
+    * */
+    val collectLogWorkRequest = OneTimeWorkRequestBuilder<CollectLogWork>()
+      .build()
+
+    val uploadLogWorkRequest = OneTimeWorkRequestBuilder<UploadLogWork>()
+      .build()
+
+    val parallelWorkRequest = mutableListOf<OneTimeWorkRequest>().apply {
+      this.add(collectLogWorkRequest)
+      this.add(uploadLogWorkRequest)
+    }
 
     randomNumberWorkRequestUUID= randomNumberWorkRequest.id
     //workManager.enqueue(randomNumberWorkRequest)
     workManager.beginWith(randomNumberWorkRequest)
       .then(dataCleanUpWorkRequest)
+      .then(parallelWorkRequest)
       .enqueue()
+
+
 
 
     workManager.getWorkInfoByIdLiveData(randomNumberWorkRequest.id).observe(viewLifecycleOwner,{

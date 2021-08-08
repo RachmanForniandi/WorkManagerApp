@@ -57,7 +57,7 @@ class HomeFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    //workManager
+    //workManager is a service that is responsible for scheduling all the work that we request
     workManager = WorkManager.getInstance(requireContext())
 
 
@@ -87,11 +87,13 @@ class HomeFragment : Fragment() {
 
     //work request class  allows us to define how and when we want our work to get executed
     val randomNumberWorkRequest = OneTimeWorkRequest.Builder(RandomNumberWork::class.java)
+      .addTag(WORK_TAG)
       .setConstraints(constraints)
       .setInputData(inputData)
       .build()
 
     val dataCleanUpWorkRequest = OneTimeWorkRequestBuilder<DataCleanUpWork>()
+      .addTag(WORK_TAG)
       .setInitialDelay(10,TimeUnit.SECONDS)
       .setConstraints(constraints)
       .build()
@@ -100,9 +102,11 @@ class HomeFragment : Fragment() {
     * parallel work
     * */
     val collectLogWorkRequest = OneTimeWorkRequestBuilder<CollectLogWork>()
+      .addTag(WORK_TAG)
       .build()
 
     val uploadLogWorkRequest = OneTimeWorkRequestBuilder<UploadLogWork>()
+      .addTag(WORK_TAG)
       .build()
 
     val parallelWorkRequest = mutableListOf<OneTimeWorkRequest>().apply {
@@ -153,8 +157,12 @@ class HomeFragment : Fragment() {
     }
   }
 
-override fun onDestroyView() {
+
+    override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+  companion object{
+    const val WORK_TAG="rachman.forniandi.workmanagerapp"
+  }
 }

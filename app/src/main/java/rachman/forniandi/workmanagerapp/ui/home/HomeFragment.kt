@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -125,6 +126,10 @@ class HomeFragment : Fragment() {
 
         it.state == WorkInfo.State.CANCELLED->{
           homeViewModel.msg.value = "RandomNumberWork: CANCELLED"
+        }
+        it.state == WorkInfo.State.FAILED->{
+          homeViewModel.msg.value = "RandomNumberWork: FAILED :Error on the for loop"
+          Toast.makeText(requireActivity(),"Failed",Toast.LENGTH_LONG).show()
         }
         it.state.isFinished->{
           val resultOut =it.outputData.getInt("KEY_RESULT",0)

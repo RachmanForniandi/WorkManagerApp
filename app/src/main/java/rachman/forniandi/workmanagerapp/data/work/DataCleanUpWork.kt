@@ -8,7 +8,11 @@ import androidx.work.workDataOf
 
 class DataCleanUpWork(context:Context, workerParams:WorkerParameters): Worker(context,workerParams) {
     override fun doWork(): Result {
-        for (i in 10..20){
+        //get the input data
+        val start = inputData.getInt("KEY_RESULT",0)
+
+        //for loop
+        for (i in start..20){
             Log.d(TAG,"DataCleanUp: $i")
 
             Thread.sleep(1000)

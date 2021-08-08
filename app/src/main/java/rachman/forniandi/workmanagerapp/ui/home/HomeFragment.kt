@@ -116,9 +116,6 @@ class HomeFragment : Fragment() {
       .then(parallelWorkRequest)
       .enqueue()
 
-
-
-
     workManager.getWorkInfoByIdLiveData(randomNumberWorkRequest.id).observe(viewLifecycleOwner,{
       when{
 

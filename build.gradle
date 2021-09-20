@@ -6,12 +6,12 @@ buildscript {
         rxjava_version = "3.0.11"
         rxandroid_version = "3.0.0"
         dagger_version = "2.33"
-        room_version = "2.4.0-alpha03"
+        room_version = "2.4.0-alpha04"
         timber_version = "4.7.1"
         retrofit_version = '2.9.0'
         okhttp_version = '4.9.0'
         retrofit_rxadaptor_version = '2.9.0'
-        work_version ='2.6.0-beta02'
+        work_version ='2.6.0'
     }
     ext.kotlin_version = "1.5.20"
     repositories {

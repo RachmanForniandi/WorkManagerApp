@@ -11,10 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.*
 import rachman.forniandi.workmanagerapp.R
-import rachman.forniandi.workmanagerapp.data.work.CollectLogWork
-import rachman.forniandi.workmanagerapp.data.work.DataCleanUpWork
-import rachman.forniandi.workmanagerapp.data.work.RandomNumberWork
-import rachman.forniandi.workmanagerapp.data.work.UploadLogWork
+import rachman.forniandi.workmanagerapp.data.work.*
 import rachman.forniandi.workmanagerapp.databinding.FragmentDashboardBinding
 import rachman.forniandi.workmanagerapp.ui.home.HomeFragment
 import java.util.concurrent.TimeUnit
@@ -54,11 +51,12 @@ private var _binding: FragmentDashboardBinding? = null
     binding.btnStart.setOnClickListener {
       oneTimeRequest()
     }
+
+    //setup the periodic work time request
+    periodicWorkRequest()
   }
 
   private fun oneTimeRequest(){
-
-
 
     //constraints for workmanager
     val constraints = Constraints.Builder()
@@ -93,6 +91,35 @@ private var _binding: FragmentDashboardBinding? = null
     workManager.beginUniqueWork(WORK_NAME,ExistingWorkPolicy.REPLACE,randomNumberWorkRequest)
       .then(dataCleanUpWorkRequest)
       .enqueue()
+
+
+  }
+
+  private fun periodicWorkRequest(){
+    //constraints for workmanager
+    val constraintsPeriodic = Constraints.Builder()
+      .setRequiresCharging(true)
+      .setRequiredNetworkType(NetworkType.CONNECTED)
+      .build()
+
+    //input data
+    /*
+    the maximum number of bytes for data when it serialized is 10 * 1024 = 10Kb
+    */
+    val inputDataPeriodic = Data.Builder()
+      .putInt("KEY_START",0)
+      .putInt("KEY_COUNT",10)
+      .build()
+
+    /*periodic work request*/
+    val randomNumberWorkRequest = PeriodicWorkRequest.Builder(
+      RandomNumberPeriodicWork::class.java,15,TimeUnit.MINUTES)
+      .setConstraints(constraintsPeriodic)
+      .setInputData(inputDataPeriodic)
+      .build()
+
+    workManager.enqueue(randomNumberWorkRequest)
+
 
 
   }

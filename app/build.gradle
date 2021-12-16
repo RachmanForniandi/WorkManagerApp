@@ -58,6 +58,8 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     // optional - Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
+    implementation "androidx.room:room-rxjava3:$room_version"
+    implementation "androidx.room:guava-rxjava3:$room_version"
 
 
     //https://github.com/google/dagger

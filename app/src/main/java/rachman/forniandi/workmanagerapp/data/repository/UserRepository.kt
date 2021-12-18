@@ -1,6 +1,6 @@
 package rachman.forniandi.workmanagerapp.data.repository
 
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Single
 import rachman.forniandi.workmanagerapp.data.local.db.AppDatabase
 import rachman.forniandi.workmanagerapp.data.local.entity.UserEntity
 

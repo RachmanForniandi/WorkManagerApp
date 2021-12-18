@@ -10,7 +10,7 @@ import rachman.forniandi.workmanagerapp.data.local.entity.EmployeeEntity
 import rachman.forniandi.workmanagerapp.data.local.entity.UserEntity
 
 
-@Database(entities = [EmployeeEntity::class,UserEntity::class],version = 1,exportSchema = false)
+@Database(entities = [EmployeeEntity::class,UserEntity::class],version = 2,exportSchema = false)
 abstract class AppDatabase:RoomDatabase() {
 
     abstract fun employeeDao():EmployeeDao
@@ -33,6 +33,7 @@ abstract class AppDatabase:RoomDatabase() {
                         AppDatabase::class.java,
                         "work_db"
                     )
+                        .fallbackToDestructiveMigration()
                         .build()
                     INSTANCE = instance
                 }

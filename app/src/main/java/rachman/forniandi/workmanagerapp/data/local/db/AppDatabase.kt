@@ -5,13 +5,16 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import rachman.forniandi.workmanagerapp.data.local.dao.EmployeeDao
+import rachman.forniandi.workmanagerapp.data.local.dao.UserDao
 import rachman.forniandi.workmanagerapp.data.local.entity.EmployeeEntity
+import rachman.forniandi.workmanagerapp.data.local.entity.UserEntity
 
 
-@Database(entities = [EmployeeEntity::class],version = 1,exportSchema = false)
+@Database(entities = [EmployeeEntity::class,UserEntity::class],version = 2,exportSchema = false)
 abstract class AppDatabase:RoomDatabase() {
 
     abstract fun employeeDao():EmployeeDao
+    abstract fun userDao():UserDao
 
     companion object{
 
@@ -30,6 +33,7 @@ abstract class AppDatabase:RoomDatabase() {
                         AppDatabase::class.java,
                         "work_db"
                     )
+                        .fallbackToDestructiveMigration()
                         .build()
                     INSTANCE = instance
                 }

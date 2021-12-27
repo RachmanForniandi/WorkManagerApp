@@ -12,6 +12,7 @@ import androidx.work.*
 import rachman.forniandi.workmanagerapp.R
 import rachman.forniandi.workmanagerapp.data.work.EmployeeCoroutineWork
 import rachman.forniandi.workmanagerapp.data.work.RandomNumberPeriodicWork
+import rachman.forniandi.workmanagerapp.data.work.UserRxJavaWorker
 import rachman.forniandi.workmanagerapp.databinding.FragmentNotificationsBinding
 import java.util.concurrent.TimeUnit
 
@@ -49,6 +50,8 @@ class NotificationsFragment : Fragment() {
 
     //setup a periodic work request to insert data to local db
     periodicWorkRequest()
+
+    periodicWorkRequestRxJava()
   }
 
   private fun periodicWorkRequest(){
@@ -65,6 +68,22 @@ class NotificationsFragment : Fragment() {
 
     workManager.enqueue(randomNumberWorkRequest)
   }
+
+  private fun periodicWorkRequestRxJava(){
+    //constraints
+    val constraintsPeriodic = Constraints.Builder()
+      .setRequiredNetworkType(NetworkType.CONNECTED)
+      .build()
+
+    /*periodic work request*/
+    val workRequestRxJava = PeriodicWorkRequest.Builder(
+      UserRxJavaWorker::class.java,15, TimeUnit.MINUTES)
+      .setConstraints(constraintsPeriodic)
+      .build()
+
+    workManager.enqueue(workRequestRxJava)
+  }
+
 
 override fun onDestroyView() {
         super.onDestroyView()

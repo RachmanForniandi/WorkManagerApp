@@ -10,10 +10,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.*
 import rachman.forniandi.workmanagerapp.R
+import rachman.forniandi.workmanagerapp.data.work.DailyWork
 import rachman.forniandi.workmanagerapp.data.work.EmployeeCoroutineWork
 import rachman.forniandi.workmanagerapp.data.work.RandomNumberPeriodicWork
 import rachman.forniandi.workmanagerapp.data.work.UserRxJavaWorker
 import rachman.forniandi.workmanagerapp.databinding.FragmentNotificationsBinding
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class NotificationsFragment : Fragment() {
@@ -52,6 +54,8 @@ class NotificationsFragment : Fragment() {
     periodicWorkRequest()
 
     periodicWorkRequestRxJava()
+
+    dailyWork()
   }
 
   private fun periodicWorkRequest(){
@@ -85,8 +89,43 @@ class NotificationsFragment : Fragment() {
   }
 
 
-override fun onDestroyView() {
+  private fun dailyWork(){
+    //constraints
+    val constraints = Constraints.Builder()
+      .setRequiredNetworkType(NetworkType.CONNECTED)
+      .build()
+
+    val currentDate = Calendar.getInstance()
+    val dueDate = Calendar.getInstance()
+
+    //set time to 8 am
+    dueDate.set(Calendar.HOUR_OF_DAY,11)
+    dueDate.set(Calendar.MINUTE,20)
+    dueDate.set(Calendar.SECOND,0)
+
+    if (dueDate.before(currentDate)){
+      dueDate.add(Calendar.HOUR_OF_DAY,24)
+    }
+
+    val timeDiff = (dueDate.timeInMillis - currentDate.timeInMillis)
+
+    val dailyWorkRequest = OneTimeWorkRequestBuilder<DailyWork>()
+      .setConstraints(constraints)
+      .setInitialDelay(timeDiff,TimeUnit.MILLISECONDS)
+      .addTag(TAG)
+      .build()
+
+    workManager.enqueue(dailyWorkRequest)
+  }
+
+
+  override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
+  }
+
+  companion object{
+    const val TAG = "DailyWork"
+  }
 }
+

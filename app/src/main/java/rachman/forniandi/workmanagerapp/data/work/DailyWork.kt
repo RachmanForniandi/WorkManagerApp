@@ -1,10 +1,7 @@
 package rachman.forniandi.workmanagerapp.data.work
 
 import android.content.Context
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.Worker
-import androidx.work.WorkerParameters
+import androidx.work.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -12,6 +9,12 @@ class DailyWork(context: Context,workerParameters: WorkerParameters):Worker(cont
 
 
     override fun doWork(): Result {
+        //constraints
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+
         val currentDate = Calendar.getInstance()
         val dueDate = Calendar.getInstance()
 

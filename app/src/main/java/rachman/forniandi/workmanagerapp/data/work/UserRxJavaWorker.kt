@@ -19,7 +19,8 @@ class UserRxJavaWorker(appContext:Context,workerParams:WorkerParameters):RxWorke
     override fun createWork(): Single<Result> {
         return repository.insertUser(UserEntity(name = "Forniandi",password = "123456"))
             .flatMap { id->
-                repository.updateUser(UserEntity(id= id,name = "Forniandi's",password = "4735677"))
+                repository.updateUser(UserEntity(id=
+                id,name = "Forniandi's",password = "4735677"))
             }
             .map {
                 result->

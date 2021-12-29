@@ -99,8 +99,8 @@ class NotificationsFragment : Fragment() {
     val dueDate = Calendar.getInstance()
 
     //set time to 8 am
-    dueDate.set(Calendar.HOUR_OF_DAY,11)
-    dueDate.set(Calendar.MINUTE,20)
+    dueDate.set(Calendar.HOUR_OF_DAY,12)
+    dueDate.set(Calendar.MINUTE,30)
     dueDate.set(Calendar.SECOND,0)
 
     if (dueDate.before(currentDate)){

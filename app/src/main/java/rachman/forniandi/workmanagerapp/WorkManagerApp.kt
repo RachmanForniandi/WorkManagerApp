@@ -23,8 +23,7 @@ class WorkManagerApp:Application() {
             val notificationChannel = NotificationChannel(
                 "ch01",
                 "Channel One",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
+                NotificationManager.IMPORTANCE_HIGH).apply {
                 description = "This is DailyWork notification channel"
             }
 

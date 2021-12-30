@@ -11,7 +11,7 @@ buildscript {
         retrofit_version = '2.9.0'
         okhttp_version = '4.9.0'
         retrofit_rxadaptor_version = '2.9.0'
-        work_version ='2.6.0'
+        work_version ='2.7.1'
     }
     ext.kotlin_version = "1.5.20"
     repositories {

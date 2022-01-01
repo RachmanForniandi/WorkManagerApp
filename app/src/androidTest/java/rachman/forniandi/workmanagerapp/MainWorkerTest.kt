@@ -93,4 +93,45 @@ class MainWorkerTest {
         assertThat(outputData, `is`(resultOutputData))
 
     }
+
+
+    @Test
+    fun testWithConstraints(){
+        //set input data
+        val inputData = workDataOf("KEY_START" to 0,"KEY_COUNT" to 0)
+
+        //result output data
+        val resultOutputData = workDataOf("KEY_RESULT" to 10)
+
+        //constraints
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        //request
+        val request = OneTimeWorkRequestBuilder<RandomNumberWork>()
+            .setConstraints(constraints)
+            .setInputData(inputData)
+            .build()
+
+        //workManager
+        val workManager = WorkManager.getInstance(context)
+        //enqueue the work for result
+        val testDriver =WorkManagerTestInitHelper.getTestDriver(context)
+
+        //enqueue the work for result
+        workManager.enqueue(request).result.get()
+
+        //tell the work manager that initial delay are set
+        testDriver?.setAllConstraintsMet(request.id)
+        //work info
+        val workInfo = workManager.getWorkInfoById(request.id).get()
+        val outputData = workInfo.outputData
+        //assert for result succeeded
+        assertThat(workInfo.state, `is`(WorkInfo.State.SUCCEEDED))
+        //assert for result succeeded
+        //assertThat(info.state, `is`(WorkInfo.State.FAILED))
+        assertThat(outputData, `is`(resultOutputData))
+
+    }
 }

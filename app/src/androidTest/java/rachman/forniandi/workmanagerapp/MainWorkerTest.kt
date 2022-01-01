@@ -12,6 +12,7 @@ import org.junit.Before
 import org.junit.Test
 import org.hamcrest.CoreMatchers.`is`
 import rachman.forniandi.workmanagerapp.data.work.RandomNumberWork
+import java.util.concurrent.TimeUnit
 
 class MainWorkerTest {
 
@@ -52,6 +53,41 @@ class MainWorkerTest {
         val outputData = info.outputData
         //assert for result succeeded
         assertThat(info.state, `is`(WorkInfo.State.SUCCEEDED))
+        //assert for result succeeded
+        //assertThat(info.state, `is`(WorkInfo.State.FAILED))
+        assertThat(outputData, `is`(resultOutputData))
+
+    }
+
+    @Test
+    fun testWithInitialDelay(){
+        //set input data
+        val inputData = workDataOf("KEY_START" to 0,"KEY_COUNT" to 0)
+
+        //result output data
+        val resultOutputData = workDataOf("KEY_RESULT" to 10)
+
+        //request
+        val request = OneTimeWorkRequestBuilder<RandomNumberWork>()
+            .setInputData(inputData)
+            .setInitialDelay(30,TimeUnit.MILLISECONDS)
+            .build()
+
+        //workManager
+        val workManager = WorkManager.getInstance(context)
+        //enqueue the work for result
+        val testDriver =WorkManagerTestInitHelper.getTestDriver(context)
+
+        //enqueue the work for result
+        workManager.enqueue(request).result.get()
+
+        //tell the work manager that initial delay are set
+        testDriver?.setInitialDelayMet(request.id)
+        //work info
+        val workInfo = workManager.getWorkInfoById(request.id).get()
+        val outputData = workInfo.outputData
+        //assert for result succeeded
+        assertThat(workInfo.state, `is`(WorkInfo.State.SUCCEEDED))
         //assert for result succeeded
         //assertThat(info.state, `is`(WorkInfo.State.FAILED))
         assertThat(outputData, `is`(resultOutputData))

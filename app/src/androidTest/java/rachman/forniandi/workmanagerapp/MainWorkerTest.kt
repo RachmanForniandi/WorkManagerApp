@@ -122,7 +122,7 @@ class MainWorkerTest {
         //enqueue the work for result
         workManager.enqueue(request).result.get()
 
-        //tell the work manager that initial delay are set
+        //tell the work manager that initial constraint are set
         testDriver?.setAllConstraintsMet(request.id)
         //work info
         val workInfo = workManager.getWorkInfoById(request.id).get()
@@ -134,4 +134,46 @@ class MainWorkerTest {
         assertThat(outputData, `is`(resultOutputData))
 
     }
+
+
+    @Test
+    fun testWithPeriodicWork(){
+        //set input data
+        val inputData = workDataOf("KEY_START" to 0,"KEY_COUNT" to 0)
+
+        //result output data
+        val resultOutputData = workDataOf("KEY_RESULT" to 10)
+
+        //constraints
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        //request
+        val request = PeriodicWorkRequestBuilder<RandomNumberWork>(15,TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .setInputData(inputData)
+            .build()
+
+        //workManager
+        val workManager = WorkManager.getInstance(context)
+        //enqueue the work for result
+        val testDriver = WorkManagerTestInitHelper.getTestDriver(context)
+
+        //enqueue the work for result
+        workManager.enqueue(request).result.get()
+
+        //tell the work manager that periodic work are set
+        testDriver?.setPeriodDelayMet(request.id)
+        //work info
+        val workInfo = workManager.getWorkInfoById(request.id).get()
+        val outputData = workInfo.outputData
+        //assert for result enqueued
+        assertThat(workInfo.state, `is`(WorkInfo.State.ENQUEUED))
+        //assert for result succeeded
+        //assertThat(info.state, `is`(WorkInfo.State.FAILED))
+
+    }
+
+
 }

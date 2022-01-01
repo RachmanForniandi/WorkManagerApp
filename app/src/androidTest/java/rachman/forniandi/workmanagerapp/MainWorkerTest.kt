@@ -7,10 +7,14 @@ import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.*
 import androidx.work.impl.utils.SynchronousExecutor
+import androidx.work.testing.TestListenableWorkerBuilder
 import androidx.work.testing.WorkManagerTestInitHelper
+import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.hamcrest.CoreMatchers.`is`
+import rachman.forniandi.workmanagerapp.data.work.EmployeeCoroutineWork
 import rachman.forniandi.workmanagerapp.data.work.RandomNumberWork
 import java.util.concurrent.TimeUnit
 
@@ -172,6 +176,30 @@ class MainWorkerTest {
         assertThat(workInfo.state, `is`(WorkInfo.State.ENQUEUED))
         //assert for result succeeded
         //assertThat(info.state, `is`(WorkInfo.State.FAILED))
+
+    }
+
+    @Test
+    fun testWithCoroutinesWorker(){
+        //set input data
+        val inputData = workDataOf("KEY_START" to 0,"KEY_COUNT" to 0)
+
+        //worker
+        val worker = TestListenableWorkerBuilder<EmployeeCoroutineWork>(context,inputData)
+            .build()
+
+        runBlocking {
+            val doWork = worker.startWork().get()
+
+            //result outputData
+            val resultOutputData = workDataOf("KEY_RESULT" to doWork.outputData.getLong("KEY_RESULT",0))
+
+            //assert
+            assertEquals(resultOutputData,doWork.outputData)
+
+            assertThat(ListenableWorker.Result.success(resultOutputData), `is`(doWork))
+        }
+
 
     }
 

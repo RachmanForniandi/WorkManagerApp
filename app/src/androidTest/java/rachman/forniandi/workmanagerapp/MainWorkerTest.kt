@@ -3,11 +3,15 @@ package rachman.forniandi.workmanagerapp
 import android.content.Context
 import android.util.Log
 import androidx.test.espresso.internal.inject.InstrumentationContext
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.work.Configuration
+import androidx.work.*
 import androidx.work.impl.utils.SynchronousExecutor
 import androidx.work.testing.WorkManagerTestInitHelper
 import org.junit.Before
+import org.junit.Test
+import org.hamcrest.CoreMatchers.`is`
+import rachman.forniandi.workmanagerapp.data.work.RandomNumberWork
 
 class MainWorkerTest {
 
@@ -24,5 +28,33 @@ class MainWorkerTest {
             .build()
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context, configuration)
+    }
+
+    @Test
+    fun testRandomNumberWork(){
+        //set input data
+        val inputData = workDataOf("KEY_START" to 0,"KEY_COUNT" to 0)
+
+        //result output data
+        val resultOutputData = workDataOf("KEY_RESULT" to 10)
+
+        //request
+        val request = OneTimeWorkRequestBuilder<RandomNumberWork>()
+            .setInputData(inputData)
+            .build()
+
+        //workManager
+        val workManager = WorkManager.getInstance(context)
+        //enqueue the work for result
+        workManager.enqueue(request).result.get()
+        //work info
+        val info = workManager.getWorkInfoById(request.id).get()
+        val outputData = info.outputData
+        //assert for result succeeded
+        assertThat(info.state, `is`(WorkInfo.State.SUCCEEDED))
+        //assert for result succeeded
+        //assertThat(info.state, `is`(WorkInfo.State.FAILED))
+        assertThat(outputData, `is`(resultOutputData))
+
     }
 }
